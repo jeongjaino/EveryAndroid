@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "552718186974",
+    "project_id": "databasepush-547be",
+    "storage_bucket": "databasepush-547be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552718186974:android:1f7101ac2cf35cf217454f",
+        "android_client_info": {
+          "package_name": "com.example.databasepush"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552718186974-sagiti3g226i86e1h3euv5pioisb0sg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2qpiaaxpxsatW_LGd0QT9nCMsEbmC3bw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552718186974-sagiti3g226i86e1h3euv5pioisb0sg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
