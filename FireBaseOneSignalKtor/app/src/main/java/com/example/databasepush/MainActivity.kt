@@ -4,8 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.databasepush.databinding.ActivityMainBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,6 +17,8 @@ const val TOPIC = "/topics/myTopic"
 class MainActivity : AppCompatActivity() {
 
     private val binding by lazy{ActivityMainBinding.inflate(layoutInflater)}
+
+    private val todoCollectionRef = Firebase.firestore.collection("todo")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +35,7 @@ class MainActivity : AppCompatActivity() {
                      TOPIC
                 ).also{
                     sendNotification(it)
+                    saveTodo(it)
                 }
             }
         }
@@ -47,6 +51,14 @@ class MainActivity : AppCompatActivity() {
             }
         }catch(e : Exception){
             Log.d("Tag", e.printStackTrace().toString())
+        }
+    }
+    private fun saveTodo(todo: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+        try{
+            todoCollectionRef.add(todo)
+            Log.d("tag","success")
+        } catch(e: Exception){
+            Log.d("tag",e.message.toString())
         }
     }
 }
