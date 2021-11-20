@@ -13,17 +13,12 @@
             android:name=".todo.TodoActivity"
             android:exported="true"
             android:label="@string/title_activity_todo"
-            android:theme="@style/Theme.CleanArcitectureNote.NoActionBar" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.CleanArcitectureNote.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@style/Theme.CleanArcitectureNote.NoActionBar" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
     </application>
 

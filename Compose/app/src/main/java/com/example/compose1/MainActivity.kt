@@ -117,13 +117,13 @@ fun Greeting(name: String) {
                 }
             }
             Spacer(modifier = Modifier.width(8.dp))
-            OutlinedButton(onClick = { expanded = !expanded }) {
+            OutlinedButton(onClick = { expanded = !expanded },
+               modifier  = Modifier.align(Alignment.CenterVertically)) {
                 Text(name)
             }
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
