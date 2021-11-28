@@ -21,13 +21,14 @@ import com.example.studyplay2.ui.theme.login.LoginScreen
 fun RegisterScreen(onRegisterButtonClicked: ()-> Unit){
     Column(modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally) {
+        Spacer(Modifier.height(50.dp))
         Row(verticalAlignment = Alignment.CenterVertically){
             Image(
                 painter = painterResource(id = R.drawable.main_cloud),
                 contentDescription = "register_main_cloud",
                 modifier = Modifier.size(50.dp)
             )
-            Spacer(modifier = Modifier.width(30.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Study Play",
                 fontFamily = CustomFont,
@@ -63,7 +64,7 @@ fun RegisterScreen(onRegisterButtonClicked: ()-> Unit){
         TextField(
             value = confirmPassword,
             onValueChange = {confirmPassword = it},
-            label = {Text("User Name")},
+            label = {Text("Password Confirm")},
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = MaterialTheme.colors.primaryVariant,

@@ -37,11 +37,11 @@ fun LoginScreen(onLoginButtonClicked: () -> Unit){
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(painter = painterResource(id = R.drawable.main_cloud),
             contentDescription = "login_main_cloud",
-            modifier = Modifier.size(100.dp))
+            modifier = Modifier.size(70.dp))
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "Study Play", color = MaterialTheme.colors.primary,
-            fontSize = 30.sp,
+            fontSize = 25.sp,
             fontFamily = CustomFont)
         }
         Spacer(Modifier.height(30.dp))
