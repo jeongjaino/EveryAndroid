@@ -1,6 +1,6 @@
 package com.example.studyplay2.domain.use_case
 
-import com.example.studyplay2.domain.Note
+import com.example.studyplay2.domain.model.Note
 import com.example.studyplay2.domain.repository.NoteRepository
 import com.example.studyplay2.domain.utils.NoteOrder
 import com.example.studyplay2.domain.utils.OrderType

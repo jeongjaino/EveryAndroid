@@ -1,7 +1,7 @@
 package com.example.studyplay2.data.repository
 
 import com.example.studyplay2.data.data_resource.NoteDao
-import com.example.studyplay2.domain.Note
+import com.example.studyplay2.domain.model.Note
 import com.example.studyplay2.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 
