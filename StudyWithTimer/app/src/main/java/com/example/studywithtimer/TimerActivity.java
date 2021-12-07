@@ -53,7 +53,7 @@ public class TimerActivity extends AppCompatActivity {
         timerText = (TextView)findViewById(R.id.timerText);
         stopButton = (FloatingActionButton)findViewById(R.id.stopButton);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 E요일", Locale.KOREA);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일 E요일", Locale.KOREA);
         stopButton.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
