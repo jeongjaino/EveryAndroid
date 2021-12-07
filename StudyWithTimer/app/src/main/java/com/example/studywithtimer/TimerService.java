@@ -9,9 +9,12 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TimerService extends Service {
@@ -23,7 +26,6 @@ public class TimerService extends Service {
     private boolean timerRunning;
 
     private long startTime, endTime;
-
 
     public class ServiceBinder extends Binder {
         TimerService getService() {
@@ -72,8 +74,20 @@ public class TimerService extends Service {
             endTime = System.currentTimeMillis();
             stopForeground(true);
             stopSelf();
+            Log.d("tag", "hello");
         }
     }
+
+    public String returnTime(Boolean isStart){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.KOREA);
+        if(isStart){
+            return sdf.format(startTime);
+        }
+        else{
+            return sdf.format(System.currentTimeMillis());
+        }
+    }
+
 
     public boolean serviceIsRunning() {
         return timerRunning;
