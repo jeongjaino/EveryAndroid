@@ -12,6 +12,8 @@ import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
 
+import java.util.concurrent.TimeUnit;
+
 public class TimerService extends Service {
 
 
@@ -23,11 +25,12 @@ public class TimerService extends Service {
     private long startTime, endTime;
 
 
-    public class ServiceBinder extends Binder{
-        TimerService getService(){
+    public class ServiceBinder extends Binder {
+        TimerService getService() {
             return TimerService.this;
         }
     }
+
     private final IBinder serviceBinder = new ServiceBinder();
 
     @Override
@@ -40,20 +43,21 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent.getAction().equals("START_TIMER")){
+        if (intent.getAction().equals("START_TIMER")) {
             startService();
-        }
-        else if(intent.getAction().equals("STOP_TIMER")){
+        } else if (intent.getAction().equals("STOP_TIMER")) {
             stopService();
         }
         return super.onStartCommand(intent, flags, startId);
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         return serviceBinder;
     }
-    public void startService(){
-        if(!timerRunning){
+
+    public void startService() {
+        if (!timerRunning) {
             timerRunning = true;
             startTime = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -61,23 +65,49 @@ public class TimerService extends Service {
             }
         }
     }
-    public void stopService(){
-        if(timerRunning){
+
+    public void stopService() {
+        if (timerRunning) {
             timerRunning = false;
             endTime = System.currentTimeMillis();
             stopForeground(true);
             stopSelf();
         }
     }
-    public boolean serviceIsRunning(){
+
+    public boolean serviceIsRunning() {
         return timerRunning;
     }
-    public long currentTime(){
-        return endTime > startTime ?
-                (endTime - startTime) / 100:
+
+    public String currentTime() {
+        Long seconds;
+        seconds = endTime > startTime ?
+                (endTime - startTime) / 100 :
                 (System.currentTimeMillis() - startTime) / 1000;
+        return timerUtils(seconds);
     }
-    private void createNotificationChannel(){
+
+    public String timerUtils(Long time){
+        Long seconds = time;
+        Long hours = TimeUnit.SECONDS.toHours(seconds);
+        seconds -= TimeUnit.HOURS.toSeconds(hours);
+        Long minutes = TimeUnit.SECONDS.toMinutes(seconds);
+        seconds -= TimeUnit.MINUTES.toSeconds(minutes);
+        String zero = "0";
+
+        return  setTime(hours) +": "+ setTime(minutes) + ": " + setTime(seconds);
+    }
+
+    public String setTime(Long time){
+        if(time < 10){
+            return "0"+time;
+        }
+        else{
+            return ""+time;
+        }
+    }
+
+    private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(
@@ -88,7 +118,8 @@ public class TimerService extends Service {
             manager.createNotificationChannel(channel);
         }
     }
-    private Notification createNotification(){
+
+    private Notification createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TIMER_NOTIFICATION_ID)
                 .setContentTitle("Study With Timer")
                 .setContentText("시간 측정중")
@@ -97,7 +128,7 @@ public class TimerService extends Service {
         Intent serviceIntent = new Intent(getApplicationContext(), TimerActivity.class);
 
         PendingIntent timePendingIntent =
-                PendingIntent.getActivity(this, 0 ,
+                PendingIntent.getActivity(this, 0,
                         serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(timePendingIntent);

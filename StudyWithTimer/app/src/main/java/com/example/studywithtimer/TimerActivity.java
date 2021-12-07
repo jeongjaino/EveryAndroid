@@ -51,11 +51,6 @@ public class TimerActivity extends AppCompatActivity {
             }
         });
     }
-    @Override
-    protected void onStop(){
-        super.onStop();
-        stopTimer();
-    }
     private void stopTimer(){
         updateStopUi();
         sendCommandToService("STOP_TIMER");
@@ -72,7 +67,7 @@ public class TimerActivity extends AppCompatActivity {
     }
     private void updateUiTimer(){
         if(serviceStatus){
-            timerText.setText(timerService.currentTime() + "seconds");
+            timerText.setText(timerService.currentTime());
         }
     }
     private void sendCommandToService(String action){
