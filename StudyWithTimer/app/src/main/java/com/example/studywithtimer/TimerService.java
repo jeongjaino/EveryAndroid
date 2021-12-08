@@ -27,6 +27,8 @@ public class TimerService extends Service {
 
     private long startTime, endTime;
 
+    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.KOREA);
+
     public class ServiceBinder extends Binder {
         TimerService getService() {
             return TimerService.this;
@@ -47,8 +49,6 @@ public class TimerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals("START_TIMER")) {
             startService();
-        } else if (intent.getAction().equals("STOP_TIMER")) {
-            stopService();
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -70,35 +70,34 @@ public class TimerService extends Service {
 
     public void stopService() {
         if (timerRunning) {
-            timerRunning = false;
             endTime = System.currentTimeMillis();
+            timerRunning = false;
             stopForeground(true);
             stopSelf();
-            Log.d("tag", "hello");
         }
     }
-
-    public String returnTime(Boolean isStart){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.KOREA);
-        if(isStart){
-            return sdf.format(startTime);
-        }
-        else{
-            return sdf.format(System.currentTimeMillis());
-        }
-    }
-
 
     public boolean serviceIsRunning() {
         return timerRunning;
     }
 
-    public String currentTime() {
+    public String elapsedTime() {
         Long seconds;
         seconds = endTime > startTime ?
                 (endTime - startTime) / 100 :
                 (System.currentTimeMillis() - startTime) / 1000;
         return timerUtils(seconds);
+    }
+
+    public String returnTime(Boolean isStart){
+
+        if(isStart){
+            return sdf.format(startTime);
+        }
+        else{
+            //endTime
+            return sdf.format(endTime);
+        }
     }
 
     public String timerUtils(Long time){

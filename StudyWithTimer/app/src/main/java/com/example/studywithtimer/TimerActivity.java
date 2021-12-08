@@ -2,12 +2,15 @@ package com.example.studywithtimer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
 
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,15 +21,21 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.w3c.dom.Text;
+
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
-public class TimerActivity extends AppCompatActivity {
+public class TimerActivity extends AppCompatActivity  {
 
     private TimerService timerService;
 
@@ -35,11 +44,19 @@ public class TimerActivity extends AppCompatActivity {
     private boolean serviceStatus;
 
     private TextView timerText;
+    private EditText todoText;
     private FloatingActionButton stopButton;
+    private FloatingActionButton writeButton;
+    private FloatingActionButton doneButton;
+    private ImageButton exitButton;
+    private CardView todoCardView;
 
     SQLiteDatabase db;
     String timeDataBase = "TimeDataBase";
-    String todoTable = "ToDoTable";
+    String todoTable = "TodoTable";
+
+    TodoAdapter todoAdapter;
+    ArrayList<TodoItem> todoArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +65,26 @@ public class TimerActivity extends AppCompatActivity {
 
         openTimeDB();
 
+        createTodoTable();
+
         sendCommandToService("START_TIMER");
 
+        selectData();
+
         timerText = (TextView)findViewById(R.id.timerText);
+        todoText = (EditText)findViewById(R.id.todo_text);
+
         stopButton = (FloatingActionButton)findViewById(R.id.stopButton);
+        writeButton = (FloatingActionButton) findViewById(R.id.todo_write_button);
+        doneButton = (FloatingActionButton) findViewById(R.id.done_button);
+        exitButton = (ImageButton) findViewById(R.id.exit_button);
+
+        todoCardView = (CardView) findViewById(R.id.todo_cardView);
+        ListView todoListView = (ListView)findViewById(R.id.todoListView);
+
+        todoCardView.setVisibility(View.GONE);
+
+        todoListView.setAdapter(todoAdapter);
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM월 dd일 E요일", Locale.KOREA);
         stopButton.setOnClickListener(new Button.OnClickListener(){
@@ -69,14 +102,44 @@ public class TimerActivity extends AppCompatActivity {
                 timeTableInsertData(date, elapsedTime, startTime, endTime);
             }
         });
+        writeButton.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                updateTodoUi(true);
+            }
+        });
+        exitButton.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                updateTodoUi(false);
+            }
+        });
+            doneButton.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                updateTodoUi(false);
+                String text = todoText.getText().toString();
+                TodoInsertData(text, 0);
+                selectData();
+                todoListView.setAdapter(todoAdapter);
+            }
+        });
+    }
+    public void updateTodoUi(Boolean isWriting){
+        if(isWriting){
+            todoCardView.setVisibility(View.VISIBLE); //animation
+            writeButton.setVisibility(View.GONE);
+        }
+        else{
+            todoCardView.setVisibility(View.GONE); //ani
+            writeButton.setVisibility(View.VISIBLE);
+        }
     }
     private void stopTimer(){
         updateStopUi();
-        sendCommandToService("STOP_TIMER");
+        timerService.stopService();
         unbindService(mConnection);
         serviceStatus = false;
-
-
         //db에 time 저장
     }
 
@@ -88,7 +151,7 @@ public class TimerActivity extends AppCompatActivity {
     }
     private void updateUiTimer(){
         if(serviceStatus){
-            timerText.setText(timerService.currentTime());
+            timerText.setText(timerService.elapsedTime());
         }
     }
     private void sendCommandToService(String action){
@@ -158,25 +221,43 @@ public class TimerActivity extends AppCompatActivity {
             Log.d("tag","false");
         }
     }
-    /*
+
     public void createTodoTable(){
-        db.execSQL("create table if not exists " + toDoTableName + "("
+        db.execSQL("create table if not exists " + todoTable + "("
                 + " _id integer PRIMARY KEY autoincrement, "
-                + " todo text);"
+                + " todo text, "
+                + " checked integer);"
         );
     }
-    public void TodoInsertData(String name, int age, String number) {
-        int resId = R.drawable.singer;
+    public void TodoInsertData(String todo, int checked) {
         try {
             if (db != null) {
-                String sql = "insert into NumberTable(name, number, age, resId) values(?, ?, ?, ?)";
-                Object[] params = {name, number, age, resId};
+                String sql = "insert into TodoTable(todo, checked) values(?, ?)";
+                Object[] params = {todo, checked};
                 db.execSQL(sql, params);
             }
         }catch(Exception e){
             e.printStackTrace();
         }
-    }*/
+    }
+    public void selectData() {
+        if (db != null) {
+            String sql = "select todo, Checked from " + todoTable;
+            Cursor cursor = db.rawQuery(sql, null);
+            todoArrayList = new ArrayList<TodoItem>();
+            for (int i = 0; i < cursor.getCount(); i++) {
+                cursor.moveToNext();
+                String date = cursor.getString(0);
+                int checked = cursor.getInt(1);
+                TodoItem todoItem = new TodoItem(date, checked);
+
+                todoArrayList.add(todoItem);
+            }
+            todoAdapter = new TodoAdapter(this, todoArrayList);
+            todoAdapter.notifyDataSetChanged();
+            cursor.close();
+        }
+    }
 }
 
 
