@@ -1,23 +1,38 @@
 package com.example.studywithtimer;
 
+import android.app.Activity;
 import android.content.Context;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class TimerAdapter extends BaseAdapter {
+public class TimerAdapter extends BaseAdapter implements View.OnClickListener{
+
+    SQLiteDatabase db;
+
+    private OnItemClickListener onItemClickListener;
 
     Context mContext = null;
     LayoutInflater layoutInflater = null;
     ArrayList<TimerItem> timerItemArrayList = new ArrayList<TimerItem>();
 
-    public TimerAdapter(Context context,  ArrayList<TimerItem> arrayList) {
+    public TimerAdapter(Context context,  ArrayList<TimerItem> arrayList, OnItemClickListener clickListener) {
         mContext = context;
         timerItemArrayList = arrayList;
+        onItemClickListener = clickListener;
         layoutInflater = LayoutInflater.from(mContext);
     }
 
@@ -45,12 +60,26 @@ public class TimerAdapter extends BaseAdapter {
         TextView elapsedTimeText = (TextView)item_view.findViewById(R.id.elapsed_time_text);
         TextView startTimeText = (TextView)item_view.findViewById(R.id.start_time_text);
         TextView endTimeText = (TextView)item_view.findViewById(R.id.end_time_text);
+        ImageButton deleteButton = (ImageButton) item_view.findViewById(R.id.deleteButton);
 
         dateText.setText(timerItemArrayList.get(position).getDate());
         elapsedTimeText.setText(timerItemArrayList.get(position).getElapsedTime());
         startTimeText.setText(timerItemArrayList.get(position).getStartTime());
         endTimeText.setText(timerItemArrayList.get(position).getEndTime());
 
+        deleteButton.setTag(position);
+        deleteButton.setOnClickListener(this);
         return item_view;
     }
+    interface OnItemClickListener{
+        public void onDeleteButtonClick(int position);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(this.onItemClickListener != null){
+            this.onItemClickListener.onDeleteButtonClick((int)view.getTag());
+        }
+    }
 }
+

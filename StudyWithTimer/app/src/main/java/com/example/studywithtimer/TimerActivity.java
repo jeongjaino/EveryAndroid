@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -119,9 +120,15 @@ public class TimerActivity extends AppCompatActivity  {
             public void onClick(View view) {
                 updateTodoUi(false);
                 String text = todoText.getText().toString();
-                TodoInsertData(text, 0);
-                selectData();
-                todoListView.setAdapter(todoAdapter);
+                if(!text.equals("")) {
+                    TodoInsertData(text, 0);
+                    todoText.setText("");
+                    selectData();
+                    todoListView.setAdapter(todoAdapter);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"내용을 입력하세요.", Toast.LENGTH_SHORT);
+                }
             }
         });
     }
