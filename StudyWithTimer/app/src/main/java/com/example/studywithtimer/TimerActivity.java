@@ -52,9 +52,7 @@ public class TimerActivity extends AppCompatActivity  {
     private ImageButton exitButton;
     private CardView todoCardView;
 
-    SQLiteDatabase db;
-    String timeDataBase = "TimeDataBase";
-    String todoTable = "TodoTable";
+    DataBaseHelper helper;
 
     TodoAdapter todoAdapter;
     ArrayList<TodoItem> todoArrayList;
@@ -64,9 +62,7 @@ public class TimerActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
-        openTimeDB();
-
-        createTodoTable();
+        helper = new DataBaseHelper(this);
 
         sendCommandToService("START_TIMER");
 
@@ -100,7 +96,7 @@ public class TimerActivity extends AppCompatActivity  {
                 String startTime = timerService.returnTime(true);
                 String endTime = timerService.returnTime(false);
 
-                timeTableInsertData(date, elapsedTime, startTime, endTime);
+                helper.timeTableInsertData(date, elapsedTime, startTime, endTime);
             }
         });
         writeButton.setOnClickListener(new Button.OnClickListener(){
@@ -121,7 +117,7 @@ public class TimerActivity extends AppCompatActivity  {
                 updateTodoUi(false);
                 String text = todoText.getText().toString();
                 if(!text.equals("")) {
-                    TodoInsertData(text, 0);
+                    helper.TodoInsertData(text, 0);
                     todoText.setText("");
                     selectData();
                     todoListView.setAdapter(todoAdapter);
@@ -202,68 +198,11 @@ public class TimerActivity extends AppCompatActivity  {
             }
         }
     }
-
-    public void openTimeDB(){
-        try{
-            db = openOrCreateDatabase(
-                    timeDataBase,
-                    Activity.MODE_PRIVATE,
-                    null
-            );
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-    public void timeTableInsertData(String date, String time, String startTime, String endTime) {
-        try {
-            if (db != null) {
-                String sql = "insert into TimeTable(date, time, startTime, endTime) values(?, ?, ?, ?)";
-                Object[] params = {date, time, startTime, endTime};
-                db.execSQL(sql, params);
-                Log.d("tag","success");
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-            Log.d("tag","false");
-        }
-    }
-
-    public void createTodoTable(){
-        db.execSQL("create table if not exists " + todoTable + "("
-                + " _id integer PRIMARY KEY autoincrement, "
-                + " todo text, "
-                + " checked integer);"
-        );
-    }
-    public void TodoInsertData(String todo, int checked) {
-        try {
-            if (db != null) {
-                String sql = "insert into TodoTable(todo, checked) values(?, ?)";
-                Object[] params = {todo, checked};
-                db.execSQL(sql, params);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
     public void selectData() {
-        if (db != null) {
-            String sql = "select todo, Checked from " + todoTable;
-            Cursor cursor = db.rawQuery(sql, null);
-            todoArrayList = new ArrayList<TodoItem>();
-            for (int i = 0; i < cursor.getCount(); i++) {
-                cursor.moveToNext();
-                String date = cursor.getString(0);
-                int checked = cursor.getInt(1);
-                TodoItem todoItem = new TodoItem(date, checked);
+        todoArrayList = helper.TodoSelectData();
 
-                todoArrayList.add(todoItem);
-            }
-            todoAdapter = new TodoAdapter(this, todoArrayList);
-            todoAdapter.notifyDataSetChanged();
-            cursor.close();
-        }
+        todoAdapter = new TodoAdapter(this, todoArrayList);
+        todoAdapter.notifyDataSetChanged();
     }
 }
 
