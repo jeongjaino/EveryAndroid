@@ -132,8 +132,9 @@ class DataBaseHelper extends SQLiteOpenHelper{
         }
     }
     public void TodoDeleteData(int position){
+        String delete = "delete from TodoTable where _id =" + position;
         database = this.getWritableDatabase();
-        database.delete(TODO_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+        database.execSQL(delete);
         database.close();
     }
     public int TodoUpdateData(int id, String todo, int checked){
@@ -147,5 +148,23 @@ class DataBaseHelper extends SQLiteOpenHelper{
         database.close();
         return checked ;
     }
-    public int
+    public TodoItem todoLoadData(int position){
+
+        TodoItem todoItem = new TodoItem(null, 0);
+        database = this.getReadableDatabase();
+        String sql = "select * from " + TODO_TABLE_NAME;
+        Cursor cursor = database.rawQuery(sql, null);
+        if(cursor != null && cursor.moveToPosition(position)){
+            try{
+                int todo = cursor.getColumnIndex("todo");
+                int check = cursor.getColumnIndex("checked");
+                todoItem = new TodoItem(cursor.getString(todo), cursor.getInt(check));
+                cursor.close();
+                database.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return todoItem;
+    }
 }

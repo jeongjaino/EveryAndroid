@@ -159,6 +159,7 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
         else startService(serviceIntent);
         bindService(serviceIntent, mConnection, 0);
     }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
@@ -202,6 +203,10 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
     @Override
     public void onCardViewClickListener(int position) {
         Intent todoIntent = new Intent(this, WriteActivity.class);
+        todoIntent.putExtra("todo", helper.todoLoadData(position).getText());
+        todoIntent.putExtra("checked", helper.todoLoadData(position).getChecked());
+        todoIntent.putExtra("position",position);
+        startActivity(todoIntent);
     }
 
     @Override

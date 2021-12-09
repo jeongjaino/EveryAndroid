@@ -56,7 +56,7 @@ public class TodoAdapter extends BaseAdapter implements View.OnClickListener, Co
 
         TextView text = (TextView) item_view.findViewById(R.id.item_todo_text);
         CheckBox check = (CheckBox) item_view.findViewById(R.id.checkBox);
-        CardView cardView = (CardView) item_view.findViewById(R.id.cardView);
+        CardView todo_cardView = (CardView) item_view.findViewById(R.id.item_todo_cardView);
 
         if(todoItemArrayList.get(position).getChecked() == 1){
             check.setChecked(true);
@@ -73,8 +73,9 @@ public class TodoAdapter extends BaseAdapter implements View.OnClickListener, Co
 
         check.setTag(contentValues);
         check.setOnCheckedChangeListener(this);
-      //  cardView.setTag(position);
-        //cardView.setOnClickListener(this);
+
+        todo_cardView.setTag(position);
+        todo_cardView.setOnClickListener(this);
 
         return item_view;
     }
@@ -85,10 +86,10 @@ public class TodoAdapter extends BaseAdapter implements View.OnClickListener, Co
     @Override
     public void onClick(View view) {
         if(this.onItemClickListener != null){
-            onItemClickListener.onCardViewClickListener((int) view.getTag());
+            int position = (int) view.getTag();
+            onItemClickListener.onCardViewClickListener(position);
         }
     }
-
     @Override
     public void onCheckedChanged(CompoundButton view, boolean b) {
         ContentValues contentValues = (ContentValues) view.getTag();
