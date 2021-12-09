@@ -41,9 +41,9 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
 
     private TextView timerText;
     private EditText todoText;
-    private FloatingActionButton stopButton;
-    private FloatingActionButton writeButton;
-    private FloatingActionButton doneButton;
+    private ImageButton stopButton;
+    private ImageButton writeButton;
+    private ImageButton doneButton;
     private ImageButton exitButton;
     private CardView todoCardView;
 
@@ -66,9 +66,9 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
         timerText = (TextView)findViewById(R.id.timerText);
         todoText = (EditText)findViewById(R.id.todo_text);
 
-        stopButton = (FloatingActionButton)findViewById(R.id.stopButton);
-        writeButton = (FloatingActionButton) findViewById(R.id.todo_write_button);
-        doneButton = (FloatingActionButton) findViewById(R.id.done_button);
+        stopButton = (ImageButton)findViewById(R.id.stop_button);
+        writeButton = (ImageButton) findViewById(R.id.todo_write_button);
+        doneButton = (ImageButton) findViewById(R.id.done_button);
         exitButton = (ImageButton) findViewById(R.id.exit_button);
 
         todoCardView = (CardView) findViewById(R.id.todo_cardView);
