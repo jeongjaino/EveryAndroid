@@ -17,24 +17,21 @@ class DataBaseHelper extends SQLiteOpenHelper{
     public static String TIMER_TABLE_NAME = "TimeTable";
     public static String TODO_TABLE_NAME = "TodoTable";
 
+    SQLiteDatabase database;
+
     public DataBaseHelper(@NonNull Context context){
         super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createTimerTable();
-        createTodoTable();
+        createTimerTable(db);
+        createTodoTable(db);
     }
-    public void onOpen(SQLiteDatabase db){
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
-    public void createTimerTable(){
-        SQLiteDatabase db = this.getWritableDatabase();
-
+    public void createTimerTable(SQLiteDatabase db){
         db.execSQL("create table if not exists " + TIMER_TABLE_NAME + "("
                 + " _id integer PRIMARY KEY autoincrement, "
                 + " date text, "
@@ -44,12 +41,13 @@ class DataBaseHelper extends SQLiteOpenHelper{
         );
     }
     public void timeTableInsertData(String date, String time, String startTime, String endTime) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        database = this.getWritableDatabase();
         try {
-            if (db != null) {
+            if (database != null) {
                 String sql = "insert into TimeTable(date, time, startTime, endTime) values(?, ?, ?, ?)";
                 Object[] params = {date, time, startTime, endTime};
-                db.execSQL(sql, params);
+                database.execSQL(sql, params);
+                database.close();
                 Log.d("tag","success");
             }
         }catch(Exception e){
@@ -58,11 +56,11 @@ class DataBaseHelper extends SQLiteOpenHelper{
         }
     }
     public ArrayList<TimerItem> TimerSelectData() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ArrayList<TimerItem> timerItemArrayList;
+        ArrayList<TimerItem> timerItemArrayList = new ArrayList<TimerItem>();
+        SQLiteDatabase rd = this.getReadableDatabase();
         try {
             String sql = "select date, time, startTime, endTime from " + TIMER_TABLE_NAME;
-            Cursor cursor = db.rawQuery(sql, null);
+            Cursor cursor = rd.rawQuery(sql, null);
             timerItemArrayList = new ArrayList<TimerItem>();
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
@@ -75,19 +73,19 @@ class DataBaseHelper extends SQLiteOpenHelper{
                 timerItemArrayList.add(timerItem);
             }
             cursor.close();
+            rd.close();
             return timerItemArrayList;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return timerItemArrayList;
         }
     }
-    public int TimerDeleteData(int position){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TIMER_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+    public void TimerDeleteData(int position){
+        database = this.getWritableDatabase();
+        database.delete(TIMER_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+        database.close();
     }
-    public void createTodoTable(){
-        SQLiteDatabase db = this.getWritableDatabase();
-
+    public void createTodoTable(SQLiteDatabase db){
         db.execSQL("create table if not exists " + TODO_TABLE_NAME + "("
                 + " _id integer PRIMARY KEY autoincrement, "
                 + " todo text, "
@@ -95,42 +93,43 @@ class DataBaseHelper extends SQLiteOpenHelper{
         );
     }
     public void TodoInsertData(String todo, int checked) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
+        database = this.getWritableDatabase();
         try {
-            if (db != null) {
+            if (database != null) {
                 String sql = "insert into TodoTable(todo, checked) values(?, ?)";
                 Object[] params = {todo, checked};
-                db.execSQL(sql, params);
+                database.execSQL(sql, params);
+                database.close();
             }
         }catch(Exception e){
             e.printStackTrace();
         }
     }
     public ArrayList<TodoItem> TodoSelectData() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ArrayList<TodoItem> todoArrayList;
+        ArrayList<TodoItem> todoArrayList = new ArrayList<TodoItem>();
+        database = this.getReadableDatabase();
         try {
             String sql = "select todo, Checked from " + TODO_TABLE_NAME;
-            Cursor cursor = db.rawQuery(sql, null);
+            Cursor cursor = database.rawQuery(sql, null);
             todoArrayList = new ArrayList<TodoItem>();
             for (int i = 0; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
                 String date = cursor.getString(0);
                 int checked = cursor.getInt(1);
                 TodoItem todoItem = new TodoItem(date, checked);
-
                 todoArrayList.add(todoItem);
             }
             cursor.close();
+            database.close();
             return todoArrayList;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return todoArrayList;
         }
     }
-    public int TodoDeleteData(int position){
-        SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TODO_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+    public void TodoDeleteData(int position){
+        database = this.getWritableDatabase();
+        database.delete(TODO_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+        database.close();
     }
 }
