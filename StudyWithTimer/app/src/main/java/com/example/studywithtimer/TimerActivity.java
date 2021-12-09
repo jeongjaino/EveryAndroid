@@ -3,20 +3,15 @@ package com.example.studywithtimer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.DialogFragment;
 
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -27,16 +22,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.studywithtimer.adapter.TodoAdapter;
+import com.example.studywithtimer.dataclass.TodoItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class TimerActivity extends AppCompatActivity  {
+public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnItemClickListener{
 
     private TimerService timerService;
 
@@ -64,7 +59,7 @@ public class TimerActivity extends AppCompatActivity  {
 
         helper = new DataBaseHelper(this);
 
-        sendCommandToService("START_TIMER");
+        sendCommandToService();
 
         selectData();
 
@@ -157,9 +152,8 @@ public class TimerActivity extends AppCompatActivity  {
             timerText.setText(timerService.elapsedTime());
         }
     }
-    private void sendCommandToService(String action){
+    private void sendCommandToService(){
         Intent serviceIntent = new Intent(this, TimerService.class);
-        serviceIntent.setAction(action);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startForegroundService(serviceIntent);
         else startService(serviceIntent);
@@ -201,8 +195,30 @@ public class TimerActivity extends AppCompatActivity  {
     public void selectData() {
         todoArrayList = helper.TodoSelectData();
 
-        todoAdapter = new TodoAdapter(this, todoArrayList);
+        todoAdapter = new TodoAdapter(this, todoArrayList, this);
         todoAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCardViewClickListener(int position) {
+        Intent todoIntent = new Intent(this, WriteActivity.class);
+    }
+
+    @Override
+    public void onCheckBoxClickListener(int position, String text, int checked) {
+        int check = 0;
+        Log.d("currentTag",String.valueOf(checked));
+        if(checked == 0){
+            check = 1;
+        }
+        /*
+        if(helper.TodoUpdateData(position, text, check)){
+            Log.d("tag","updateSuccess");
+        }else{
+            Log.d("tag","updatefailed");
+        }*/
+        Log.d("future tag",String.valueOf(helper.TodoUpdateData(position, text, check )));
+        selectData();
     }
 }
 

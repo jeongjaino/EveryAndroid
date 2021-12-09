@@ -1,4 +1,4 @@
-package com.example.studywithtimer;
+package com.example.studywithtimer.dataclass;
 
 public class TimerItem {
 

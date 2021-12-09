@@ -1,5 +1,6 @@
 package com.example.studywithtimer;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.example.studywithtimer.dataclass.TimerItem;
+import com.example.studywithtimer.dataclass.TodoItem;
 
 import java.util.ArrayList;
 
@@ -109,7 +113,7 @@ class DataBaseHelper extends SQLiteOpenHelper{
         ArrayList<TodoItem> todoArrayList = new ArrayList<TodoItem>();
         database = this.getReadableDatabase();
         try {
-            String sql = "select todo, Checked from " + TODO_TABLE_NAME;
+            String sql = "select todo, checked from " + TODO_TABLE_NAME;
             Cursor cursor = database.rawQuery(sql, null);
             todoArrayList = new ArrayList<TodoItem>();
             for (int i = 0; i < cursor.getCount(); i++) {
@@ -132,4 +136,16 @@ class DataBaseHelper extends SQLiteOpenHelper{
         database.delete(TODO_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
         database.close();
     }
+    public int TodoUpdateData(int id, String todo, int checked){
+        database = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("_id", id);
+        contentValues.put("todo", todo);
+        contentValues.put("checked", checked);
+        //check를 옮기면서 버그 발생 하
+        database.update(TODO_TABLE_NAME, contentValues,"_id = ?", new String[]{Integer.toString(id)});
+        database.close();
+        return checked ;
+    }
+    public int
 }
