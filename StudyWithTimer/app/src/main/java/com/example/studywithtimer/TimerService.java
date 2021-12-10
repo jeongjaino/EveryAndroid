@@ -87,14 +87,14 @@ public class TimerService extends Service {
         return timerUtils(seconds);
     }
 
-    public String returnTime(Boolean isStart){
+    public Long returnTime(Boolean isStart){
 
         if(isStart){
-            return sdf.format(startTime);
+            return startTime;
         }
         else{
             //endTime
-            return sdf.format(endTime);
+            return endTime;
         }
     }
 

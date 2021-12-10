@@ -34,6 +34,8 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
 
     private boolean serviceStatus;
 
+    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss", Locale.KOREA);
+
     private TextView timerText;
     private EditText todoText;
     private ImageButton stopButton;
@@ -79,10 +81,16 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
                 Intent timerIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(timerIntent);
 
+                Long start = timerService.returnTime(true);
+                Long end = timerService.returnTime(false);
+
                 String date = sdf.format(System.currentTimeMillis());
-                String elapsedTime = timerText.getText().toString();
-                String startTime = timerService.returnTime(true);
-                String endTime = timerService.returnTime(false);
+                Long time = (end-start);
+
+                //반올림하면서 1초 오차가 발생할 수 있음
+                String elapsedTime = sdfTime.format(time);
+                String startTime = sdfTime.format(start);
+                String endTime = sdfTime.format(end);
 
                 helper.timeTableInsertData(date, elapsedTime, startTime, endTime);
             }
