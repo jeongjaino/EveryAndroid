@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -56,11 +55,9 @@ class DataBaseHelper extends SQLiteOpenHelper{
                 Object[] params = {date, time, startTime, endTime};
                 database.execSQL(sql, params);
                 database.close();
-                Log.d("tag","success");
             }
         }catch(Exception e){
             e.printStackTrace();
-            Log.d("tag","false");
         }
     }
     public ArrayList<TimerItem> TimerSelectData() {

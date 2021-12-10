@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,12 +19,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.studywithtimer.adapter.TodoAdapter;
 import com.example.studywithtimer.dataclass.TodoItem;
-import com.example.studywithtimer.dialog.ConfirmDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -113,24 +107,28 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
                 if(!text.equals("")) {
                     helper.TodoInsertData(text, 0);
                     todoText.setText("");
-                    selectData();
-                    todoListView.setAdapter(todoAdapter);
                 }
                 else{
                     Toast.makeText(getApplicationContext(),"내용을 입력하세요.", Toast.LENGTH_SHORT);
                 }
+                selectData();
+                todoListView.setAdapter(todoAdapter);
             }
         });
     }
     public void updateTodoUi(Boolean isWriting){
         if(isWriting){
-            todoCardView.setVisibility(View.VISIBLE); //animation
+            todoCardView.setVisibility(View.VISIBLE);
             writeButton.setVisibility(View.GONE);
+            selectData();
         }
         else{
-            todoCardView.setVisibility(View.GONE); //ani
+            todoCardView.setVisibility(View.GONE);
             writeButton.setVisibility(View.VISIBLE);
         }
+        ListView todoListView = (ListView)findViewById(R.id.todoListView);
+        selectData();
+        todoListView.setAdapter(todoAdapter);
     }
     private void stopTimer(){
         updateStopUi();
@@ -194,7 +192,6 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
     }
     public void selectData() {
         todoArrayList = helper.TodoSelectData();
-
         todoAdapter = new TodoAdapter(this, todoArrayList, this);
         todoAdapter.notifyDataSetChanged();
     }

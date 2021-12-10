@@ -17,8 +17,6 @@ import java.util.ArrayList;
 
 public class TimerAdapter extends BaseAdapter implements View.OnClickListener{
 
-    SQLiteDatabase db;
-
     private OnItemClickListener onItemClickListener;
 
     Context mContext = null;
