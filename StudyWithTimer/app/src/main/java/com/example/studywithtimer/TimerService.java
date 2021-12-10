@@ -134,7 +134,7 @@ public class TimerService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, TIMER_NOTIFICATION_ID)
                 .setContentTitle("Study With Timer")
                 .setContentText("시간 측정중")
-                .setSmallIcon(R.drawable.ic_baseline_timer_24);
+                .setSmallIcon(R.drawable.up_timer);
 
         Intent serviceIntent = new Intent(getApplicationContext(), TimerActivity.class);
 

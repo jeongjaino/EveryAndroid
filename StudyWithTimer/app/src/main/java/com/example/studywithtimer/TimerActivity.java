@@ -206,6 +206,7 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
         todoIntent.putExtra("checked", helper.todoLoadData(position).getChecked());
         todoIntent.putExtra("position",position);
         startActivity(todoIntent);
+        finish();
     }
 
     @Override
