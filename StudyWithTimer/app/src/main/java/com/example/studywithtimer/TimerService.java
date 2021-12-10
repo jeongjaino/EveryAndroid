@@ -118,13 +118,12 @@ public class TimerService extends Service {
             return ""+time;
         }
     }
-
     private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(
                     TIMER_NOTIFICATION_ID, "Study With Timer Notification",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_LOW
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
