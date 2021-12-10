@@ -74,6 +74,7 @@ public class TimerAdapter extends BaseAdapter implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         if(this.onItemClickListener != null){
+            Log.d("tag in adapter", String.valueOf((int)view.getTag()));
             this.onItemClickListener.onDeleteButtonClick((int)view.getTag());
         }
     }

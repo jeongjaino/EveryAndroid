@@ -10,13 +10,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WriteActivity extends AppCompatActivity {
+import com.example.studywithtimer.dialog.ConfirmDialog;
+
+public class WriteActivity extends AppCompatActivity implements ConfirmDialog.onButtonClickListener  {
 
     private TextView todoText;
     private ImageButton backButton;
     private ImageButton menuButton;
+    private int itemPosition;
 
-    DataBaseHelper helper;
+    DataBaseHelper helper = new DataBaseHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +31,6 @@ public class WriteActivity extends AppCompatActivity {
         menuButton = (ImageButton) findViewById(R.id.menu_button);
 
         todoText.setText(getIntent().getStringExtra("todo"));
-
-        helper = new DataBaseHelper(this);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,14 +53,22 @@ public class WriteActivity extends AppCompatActivity {
                 startActivity(writeIntent);
             }
         });
-
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                helper.TodoDeleteData(getIntent().getIntExtra("position", 0));
-                Intent writeIntent = new Intent(getApplicationContext(), TimerActivity.class);
-                startActivity(writeIntent);
+                createDialog();
             }
         });
+    }
+    public void createDialog(){
+        ConfirmDialog dialog = new ConfirmDialog();
+        dialog.show(this.getSupportFragmentManager(), "dialog");
+        itemPosition = getIntent().getIntExtra("position", 0);
+    }
+    @Override
+    public void onPositiveButtonClick() {
+        helper.TodoDeleteData(itemPosition);
+        Intent writeIntent = new Intent(getApplicationContext(), TimerActivity.class);
+        startActivity(writeIntent);
     }
 }

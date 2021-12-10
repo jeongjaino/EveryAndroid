@@ -25,6 +25,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="20dp"
+                android:fontFamily="@font/font"
                 android:text="해당 기록을 삭제할까요?"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -33,32 +34,32 @@
 
             <Button
                 android:id="@+id/negative_button"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                style="?attr/materialButtonOutlinedStyle"
                 android:text="아니요"
-                android:textColor = "#4CAF50"
+                android:textColor="#03A9F4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/positive_button"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:strokeColor="#4CAF50" />
+                app:strokeColor="#03A9F4" />
 
             <Button
                 android:id="@+id/positive_button"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                style="?attr/materialButtonOutlinedStyle"
                 android:text="네"
-                android:textColor = "#4CAF50"
-                app:iconTint="#8BC34A"
+                android:textColor="#03A9F4"
+                app:iconTint="#03A9F4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/negative_button"
-                app:strokeColor="#4CAF50" />
+                app:strokeColor="#03A9F4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

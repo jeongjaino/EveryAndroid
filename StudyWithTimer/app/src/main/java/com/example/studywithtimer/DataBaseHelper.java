@@ -3,6 +3,7 @@ package com.example.studywithtimer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -29,6 +30,8 @@ class DataBaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        DropTimeTable(db);
+        DropTodoTable(db);
         createTimerTable(db);
         createTodoTable(db);
     }
@@ -36,12 +39,13 @@ class DataBaseHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
     public void createTimerTable(SQLiteDatabase db){
-        db.execSQL("create table if not exists " + TIMER_TABLE_NAME + "("
-                + " _id integer PRIMARY KEY autoincrement, "
-                + " date text, "
-                + " time text, "
-                + " startTime text, "
-                + " endTime text);"
+        db.execSQL("create table if not exists " + TIMER_TABLE_NAME + " ("
+                + "id integer PRIMARY KEY autoincrement, "
+                + "date text, "
+                + "time text, "
+                + "startTime text, "
+                + "endTime text"
+                + ")"
         );
     }
     public void timeTableInsertData(String date, String time, String startTime, String endTime) {
@@ -85,13 +89,28 @@ class DataBaseHelper extends SQLiteOpenHelper{
         }
     }
     public void TimerDeleteData(int position){
+        int idIndex;
         database = this.getWritableDatabase();
-        database.delete(TIMER_TABLE_NAME,"_id = ?", new String[]{Integer.toString(position)});
+
+        String sql1 = "select * from " + TIMER_TABLE_NAME;
+        Cursor cursor = database.rawQuery(sql1, null);
+        //adapter position 값으로 cursor를 이용해서 id값 찾기
+        if(cursor != null && cursor.moveToPosition(position)){
+            try{
+                idIndex = cursor.getColumnIndex("id");
+                int id = cursor.getInt(idIndex);
+                String sql = "delete from TimeTable where id ="+ id;
+                database.execSQL(sql);
+                cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         database.close();
     }
     public void createTodoTable(SQLiteDatabase db){
         db.execSQL("create table if not exists " + TODO_TABLE_NAME + "("
-                + " _id integer PRIMARY KEY autoincrement, "
+                + " id integer PRIMARY KEY autoincrement, "
                 + " todo text, "
                 + " checked integer);"
         );
@@ -132,24 +151,46 @@ class DataBaseHelper extends SQLiteOpenHelper{
         }
     }
     public void TodoDeleteData(int position){
-        String delete = "delete from TodoTable where _id =" + position;
         database = this.getWritableDatabase();
-        database.execSQL(delete);
+        int indexId;
+        String sql = "select * from " + TODO_TABLE_NAME;
+        Cursor cursor = database.rawQuery(sql, null);
+        if(cursor != null && cursor.moveToPosition(position)) {
+            try {
+                indexId = cursor.getColumnIndex("id");
+                int pos = cursor.getInt(indexId);
+                String delete = "delete from TodoTable where id =" + pos;
+                database.execSQL(delete);
+                cursor.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
         database.close();
     }
-    public int TodoUpdateData(int id, String todo, int checked){
+    public void TodoUpdateData(int position, String todo, int checked){
         database = this.getWritableDatabase();
+        int indexId;
         ContentValues contentValues = new ContentValues();
-        contentValues.put("_id", id);
-        contentValues.put("todo", todo);
-        contentValues.put("checked", checked);
-        //check를 옮기면서 버그 발생 하
-        database.update(TODO_TABLE_NAME, contentValues,"_id = ?", new String[]{Integer.toString(id)});
+        String sql = "select * from " + TODO_TABLE_NAME;
+        Cursor cursor = database.rawQuery(sql, null);
+        if(cursor != null && cursor.moveToPosition(position)) {
+            try{
+                indexId = cursor.getColumnIndex("id");
+                int pos = cursor.getInt(indexId);
+                contentValues.put("id", pos);
+                contentValues.put("todo", todo);
+                contentValues.put("checked", checked);
+                database.update(TODO_TABLE_NAME, contentValues,"id = ?"
+                        ,new String[]{Integer.toString(pos)});
+                cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         database.close();
-        return checked ;
     }
     public TodoItem todoLoadData(int position){
-
         TodoItem todoItem = new TodoItem(null, 0);
         database = this.getReadableDatabase();
         String sql = "select * from " + TODO_TABLE_NAME;
@@ -166,5 +207,21 @@ class DataBaseHelper extends SQLiteOpenHelper{
             }
         }
         return todoItem;
+    }
+    public void DropTimeTable(SQLiteDatabase db){
+        String sql = "drop table if exists " + TIMER_TABLE_NAME;
+        try{
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public void DropTodoTable(SQLiteDatabase db){
+        String sql = "drop table if exists " + TODO_TABLE_NAME;
+        try{
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

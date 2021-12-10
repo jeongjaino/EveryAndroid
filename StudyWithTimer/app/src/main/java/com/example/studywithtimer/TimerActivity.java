@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.studywithtimer.adapter.TodoAdapter;
 import com.example.studywithtimer.dataclass.TodoItem;
+import com.example.studywithtimer.dialog.ConfirmDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
@@ -47,7 +48,7 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
     private ImageButton exitButton;
     private CardView todoCardView;
 
-    DataBaseHelper helper;
+    DataBaseHelper helper = new DataBaseHelper(this);
 
     TodoAdapter todoAdapter;
     ArrayList<TodoItem> todoArrayList;
@@ -56,8 +57,6 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
-
-        helper = new DataBaseHelper(this);
 
         sendCommandToService();
 
@@ -212,18 +211,10 @@ public class TimerActivity extends AppCompatActivity implements TodoAdapter.OnIt
     @Override
     public void onCheckBoxClickListener(int position, String text, int checked) {
         int check = 0;
-        Log.d("currentTag",String.valueOf(checked));
         if(checked == 0){
             check = 1;
         }
-        /*
-        if(helper.TodoUpdateData(position, text, check)){
-            Log.d("tag","updateSuccess");
-        }else{
-            Log.d("tag","updatefailed");
-        }*/
-        Log.d("future tag",String.valueOf(helper.TodoUpdateData(position, text, check )));
-        selectData();
+        helper.TodoUpdateData(position, text, check);
     }
 }
 
