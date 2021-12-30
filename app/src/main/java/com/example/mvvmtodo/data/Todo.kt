@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Todo(
     val title: String,
-    val descrption: String?,
+    val description: String?,
     val isDone: Boolean,
     //자동 id 생성하고 증가
     @PrimaryKey
