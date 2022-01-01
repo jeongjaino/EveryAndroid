@@ -47,7 +47,6 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startService();
-
         return super.onStartCommand(intent, flags, startId);
     }
 
