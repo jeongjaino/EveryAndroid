@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">HiltTutorial</string>
-    <string name="string_to_inject">This is a String we will inject </string>
+    <string name="string_to_inject">This is a String we will inject</string>
 </resources>

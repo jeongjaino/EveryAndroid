@@ -2,6 +2,7 @@ package com.example.hilttutorial
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -11,17 +12,14 @@ import javax.inject.Named
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    @Named("String2")
-    lateinit var test: String
 
-    private val viewModel: TestViewModel by viewModels()
+    @Inject
+    lateinit var testString: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("tag", "Test String $test")
-        viewModel
+        Log.d("MainActivity", "Test String from MainActivity: $testString")
     }
 }

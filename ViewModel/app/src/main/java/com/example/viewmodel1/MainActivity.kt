@@ -32,4 +32,5 @@ class MainActivity : AppCompatActivity() {
             myNumberViewModel.updateValue(actionType = ActionType.PLUS, userInput)
         }
     }
+
 }
