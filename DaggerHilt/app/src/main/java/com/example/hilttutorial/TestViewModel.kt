@@ -8,9 +8,7 @@ import javax.inject.Named
 class TestViewModel @Inject constructor(
     @Named("String2") testString2: String
 ): ViewModel() {
-
     init{
-        Log.d("ViewModel", "Test String from ViewModel: $testString2")
+        Log.d("tag", "Test String from ViewModel: $testString2")
     }
-
 }

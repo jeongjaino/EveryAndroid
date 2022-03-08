@@ -13,8 +13,6 @@ import javax.inject.Named
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-
     @Inject
     @Named("String1")
     lateinit var testString: String
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("MainActivity", "Test String from MainActivity: $testString")
+        Log.d("tag", "Test String from MainActivity: $testString")
         viewModel
     }
 }

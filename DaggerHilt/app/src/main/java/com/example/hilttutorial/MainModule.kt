@@ -16,7 +16,7 @@ import javax.inject.Singleton
 object MainModule {
     //retrofit, room시 di 사용
 
-    @ActivityScoped //singleton 어노테이션은 싱글턴컴포넌트와 작동함. activityScope만큼 살고 그동안 recreate 되지않음.
+    @ActivityScoped //activityScope만큼 존재하고, 그동안 recreate 되지않음.
     @Provides
     @Named("String2") // named를 통해 어떤걸 주입할지 결정
     fun provideTestString2(
