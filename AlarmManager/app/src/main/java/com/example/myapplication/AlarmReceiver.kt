@@ -14,7 +14,6 @@ class AlarmReceiver: BroadcastReceiver(){
     companion object{
         const val NOTIFICATION_CHANNEL_ID = "1000"
         const val NOTIFICATION_ID = 100
-
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -22,7 +21,6 @@ class AlarmReceiver: BroadcastReceiver(){
         notifyNotification(context)
     }
     private fun createNotificationChannel(context: Context){
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val notificationChannel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,

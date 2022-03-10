@@ -55,7 +55,7 @@ class FirebaseMessagingService: FirebaseMessagingService() {
     ): Notification {
 
         val intent = Intent(this, MainActivity::class.java).apply{
-            putExtra("NotificationType", "${type.title} 타입")
+            putExtra("NotificationType", "${    type.title} 타입")
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
         val pendingIntent = PendingIntent.getActivity(this, type.id, intent, FLAG_UPDATE_CURRENT)

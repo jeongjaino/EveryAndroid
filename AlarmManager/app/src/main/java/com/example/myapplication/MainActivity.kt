@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         val model = fetchDataFromSF()
         renderView(model)
         //뷰 초기화
-        //데이터 가져오기
+        //데이터 가져오기x
         //데이터 그리기
     }
 
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 alarmManager.setExactAndAllowWhileIdle() //doze모드 영향을 받지않는 api
                  */
                 alarmManager.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
+                    AlarmManager.RTC_WAKEUP, //경과 시간이 아닌 현재 시간으로
                     calendar.timeInMillis,
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
@@ -68,21 +68,19 @@ class MainActivity : AppCompatActivity() {
         binding.changeAlarmTimeButton.setOnClickListener {
 
             val calendar = Calendar.getInstance()
-
+            //TimPickerDialog 생성
             TimePickerDialog(this, { picker, hour, minute ->
-
+                //설정한 시간 SharedPreference 에 저장
                 val model = saveAlarmModel(hour, minute, false)
                 renderView(model)
-
+                //기존 알람 삭제
                 cancelAlarm()
 
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
                 .show()
         }
-
     }
     private fun saveAlarmModel(hour: Int, minute: Int, onOff: Boolean): AlarmDisplayModel{
-
         val model = AlarmDisplayModel(
             hour = hour,
             minute = minute,
@@ -107,8 +105,8 @@ class MainActivity : AppCompatActivity() {
             minute = alarmData[1].toInt(),
             onOff = onOFFDBValue
         )
-        //보정
 
+        //보정
         val pendingIntent = PendingIntent.getBroadcast(
             this, ALARM_REQUEST_CODE,
             Intent(this, AlarmReceiver::class.java), PendingIntent.FLAG_NO_CREATE)
