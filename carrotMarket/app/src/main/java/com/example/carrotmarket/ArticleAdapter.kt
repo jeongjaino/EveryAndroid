@@ -13,7 +13,6 @@ import java.util.*
 
 class ArticleAdapter: ListAdapter<ArticleModel, ArticleAdapter.ViewHolder>(diffUtil) {
 
-
     inner class ViewHolder(private val binding: ItemArticleBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun bind(model: ArticleModel){

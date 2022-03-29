@@ -47,7 +47,6 @@ class ArticleAddActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
         binding.imageAddButton.setOnClickListener {
             when{
                 ContextCompat.checkSelfPermission(
@@ -99,7 +98,7 @@ class ArticleAddActivity : AppCompatActivity() {
                 if(it.isSuccessful){
                     storage.reference.child("article/photo").child(fileName)
                         .downloadUrl // 저장 성공하면 downloadUri를 가져옴
-                        .addOnCompleteListener{ uri ->
+                        .addOnSuccessListener{
                             successHandler(uri.toString())
                         }.addOnFailureListener{
                             errorHandler()
