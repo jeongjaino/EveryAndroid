@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.example.carrotmarket.ArticleModel
 import com.example.carrotmarket.databinding.ActivityArticleAddBinding
 import com.example.carrotmarket.utils.Companion.DB_ARTICLES
@@ -71,6 +72,8 @@ class ArticleAddActivity : AppCompatActivity() {
             val price = binding.priceEditText.text.toString()
             val sellerId = auth.currentUser?.uid.orEmpty()
 
+            showProgress()
+
             if(selectedUri != null){
                 val photoUri = selectedUri ?: return@setOnClickListener
                 uploadPhoto(photoUri,
@@ -79,6 +82,7 @@ class ArticleAddActivity : AppCompatActivity() {
                     },
                     errorHandler = {
                         Toast.makeText(this, "사진 업로드에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                        hideProgress()
                     }
                 )
             }else{
@@ -106,6 +110,7 @@ class ArticleAddActivity : AppCompatActivity() {
             }
     }
     private fun uploadArticle(sellerId: String, title: String, price:String, imageUri: String){
+        hideProgress()
         val model = ArticleModel(sellerId, title, System.currentTimeMillis(), "$price 원", imageUri)
         articleDB.push().setValue(model)
         finish()
@@ -131,6 +136,14 @@ class ArticleAddActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type ="image/*"
         getContent.launch(intent)
+    }
+
+    private fun showProgress(){
+        binding.progressBar.isVisible = true
+    }
+
+    private fun hideProgress(){
+        binding.progressBar.isVisible = false
     }
 
     private fun showPermissionContextPopup(){
