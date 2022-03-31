@@ -23,12 +23,14 @@ class MyPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        buttonLock()
+        if(auth.currentUser == null) {
+            buttonLock()
+        }
         binding.signInOutButton.setOnClickListener {
             if(auth.currentUser == null){
-                uiUpdate(true)
+                uiUpdate(true, isSignIn = true)
             }else{
-                uiUpdate(false)
+                uiUpdate(false, isSignIn = false)
             }
         }
 
@@ -48,14 +50,15 @@ class MyPageFragment : Fragment() {
                     }
             }
         }
-
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
         if(auth.currentUser == null){
-            uiUpdate(true)
+            uiUpdate(true, isSignIn = false)
+        }else{
+            successSignIn()
         }
     }
 
@@ -71,31 +74,32 @@ class MyPageFragment : Fragment() {
             binding.signInOutButton.isEnabled = enable
         }
     }
-    private fun uiUpdate(isSignOut: Boolean){
-       if(isSignOut){
+    private fun uiUpdate(currentLoginUser: Boolean, isSignIn: Boolean){
+       if(!currentLoginUser){
            auth.signOut()
-
            binding.emailEditText.text.clear()
            binding.emailEditText.isEnabled = true
            binding.passwordEditText.text.clear()
-           binding.emailEditText.isEnabled = true
+           binding.passwordEditText.isEnabled = true
 
+           binding.signUpButton.isEnabled = true
+           binding.signInOutButton.isEnabled = true
            binding.signInOutButton.text = "로그인"
-           binding.signUpButton.isEnabled = false
-           binding.signInOutButton.isEnabled = false
        } else{
-           val email = binding.emailEditText.text.toString()
-           val password = binding.passwordEditText.text.toString()
+           if(isSignIn) {
+               val email = binding.emailEditText.text.toString()
+               val password = binding.passwordEditText.text.toString()
 
-           auth.signInWithEmailAndPassword(email, password)
-               .addOnCompleteListener(requireActivity()){ task ->
-                   if(task.isSuccessful){
-                       successSignIn()
-                   } else{
-                       Toast.makeText(context, "로그인에 실패하였습니다. 이메일 혹은 비밀번호를 확인해주세요.",
-                           Toast.LENGTH_SHORT).show()
+               auth.signInWithEmailAndPassword(email, password)
+                   .addOnCompleteListener(requireActivity()) { task ->
+                       if (task.isSuccessful) {
+                           successSignIn()
+                       } else {
+                           Toast.makeText(context, "로그인에 실패하였습니다. 이메일 혹은 비밀번호를 확인해주세요.",
+                               Toast.LENGTH_SHORT).show()
+                       }
                    }
-               }
+           }
        }
     }
     private fun successSignIn(){
