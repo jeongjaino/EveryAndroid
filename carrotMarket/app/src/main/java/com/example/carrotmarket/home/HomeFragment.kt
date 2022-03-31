@@ -9,8 +9,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.carrotmarket.ArticleAdapter
 import com.example.carrotmarket.ArticleModel
+import com.example.carrotmarket.chatlist.ChatList
 import com.example.carrotmarket.databinding.FragmentHomeBinding
+import com.example.carrotmarket.utils.Companion.CHILD_CHAT
 import com.example.carrotmarket.utils.Companion.DB_ARTICLES
+import com.example.carrotmarket.utils.Companion.DB_USERS
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -43,13 +47,39 @@ class HomeFragment : Fragment() {
 
     private val auth : FirebaseAuth by lazy{ Firebase.auth}
     private lateinit var articleDB :DatabaseReference
+    private lateinit var userDB :DatabaseReference
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         articleDB = Firebase.database.reference.child(DB_ARTICLES)
-        articleAdapter = ArticleAdapter()
+        userDB = Firebase.database.reference.child(DB_USERS)
+        articleAdapter = ArticleAdapter(onItemClicked = { articleModel ->
+            if(loginCheck()) {
+                if(auth.currentUser!!.uid != articleModel.sellerId) {
+                    val charRoom = ChatList(
+                        buyerId = auth.currentUser!!.uid,
+                        sellerId = articleModel.sellerId,
+                        itemTitle = articleModel.title,
+                        key = System.currentTimeMillis()
+                    )
+                    userDB.child(auth.currentUser!!.uid)
+                        .child(CHILD_CHAT)
+                        .push()
+                        .setValue(charRoom)
+                    userDB.child(articleModel.sellerId)
+                        .child(CHILD_CHAT)
+                        .push()
+                        .setValue(charRoom)
+                    Snackbar.make(requireView(), " 채팅방이 형성되었습니다." , Snackbar.LENGTH_SHORT).show()
+
+                }else{
+                    Snackbar.make(requireView(), "내가 올린 물건입니다." , Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        })
         articleList.clear()
         binding.articleRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.articleRecyclerView.adapter = articleAdapter
@@ -61,17 +91,22 @@ class HomeFragment : Fragment() {
 
         binding.addFloatingButton.setOnClickListener{
             context?.let{
-                //if(auth.currentUser != null){
+                if(loginCheck()){
                     val intent = Intent(it, ArticleAddActivity::class.java)
                     startActivity(intent)
-                //}
-                //else{
-                  //  Snackbar.make(requireView(), "로그인을 해야합니다.", Snackbar.LENGTH_LONG).show()
-                //}
+                }
             }
         }
 
         return binding.root
+    }
+    private fun loginCheck(): Boolean{
+        if(auth.currentUser != null){
+            return true
+        }else{
+            Snackbar.make(requireView(), "로그인을 해야합니다.", Snackbar.LENGTH_LONG).show()
+        }
+        return false
     }
 
     override fun onResume() {
