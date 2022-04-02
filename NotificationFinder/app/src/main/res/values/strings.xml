@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NotificationFinder</string>
+    <string name="please_input_search_keyword">검색어를 입력해주세요</string>
+    <string name="search">검색</string>
+</resources>
