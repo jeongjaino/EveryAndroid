@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notificationfinder.databinding.ActivityMainBinding
 import com.example.notificationfinder.model.LocationLatLngEntitiy
 import com.example.notificationfinder.model.SearchResultEntity
+import com.example.notificationfinder.response.search.Poi
+import com.example.notificationfinder.response.search.Pois
+import com.example.notificationfinder.response.search.SearchResponse
 import com.example.notificationfinder.utils.RetrofitUtil
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -29,7 +32,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         initAdapter()
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchRecyclerView.adapter = adapter
-        setData()
         adapter.notifyDataSetChanged()
         bindViews()
         setContentView(binding.root)
@@ -42,24 +44,24 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             searchKeyWord(searchTextView.text.toString())
         }
     }
-    private fun setData(){
-        val dataList = (0..10).map{
+    private fun setData(pois: Pois){
+        val dataList = pois.poi.map{
             SearchResultEntity(
-                buildingName = "빌딩 $it",
-                fullAddress = "주소 $it",
+                buildingName = it.name ?: "빌딩명 없음",
+                fullAddress = makeMainAddress(it),
                 locationLatLng = LocationLatLngEntitiy(
-                    it.toFloat(),
-                    it.toFloat()
+                    it.noorLat,
+                    it.noorLon
                 )
             )
-
         }
         adapter.setSearchResultList(dataList){
             Toast.makeText(this, "빌딩이름: ${it.buildingName} 주소: ${it.fullAddress}", Toast.LENGTH_SHORT).show()
         }
+        adapter.notifyDataSetChanged()
     }
     private fun searchKeyWord(keyWordString: String){
-        launch(coroutineContext) { //mainThread
+        launch(coroutineContext) {
             try{
                 withContext(Dispatchers.IO){
                     val response = RetrofitUtil.apiService.getSearchLocation(
@@ -68,7 +70,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     if(response.isSuccessful){
                         val body = response.body()
                         withContext(Dispatchers.Main){
-                            Log.e("response",body.toString())
+                            body?.let{ searchResponse ->
+                                setData(searchResponse.searchPoiInfo.pois)
+                            }
                         }
                     }
                     else{
@@ -80,4 +84,19 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
         }
     }
+    private fun makeMainAddress(poi: Poi): String =
+        if (poi.secondNo?.trim().isNullOrEmpty()) {
+            (poi.upperAddrName?.trim() ?: "") + " " +
+                    (poi.middleAddrName?.trim() ?: "") + " " +
+                    (poi.lowerAddrName?.trim() ?: "") + " " +
+                    (poi.detailAddrName?.trim() ?: "") + " " +
+                    poi.firstNo?.trim()
+        } else {
+            (poi.upperAddrName?.trim() ?: "") + " " +
+                    (poi.middleAddrName?.trim() ?: "") + " " +
+                    (poi.lowerAddrName?.trim() ?: "") + " " +
+                    (poi.detailAddrName?.trim() ?: "") + " " +
+                    (poi.firstNo?.trim() ?: "") + " " +
+                    poi.secondNo?.trim()
+        }
 }
