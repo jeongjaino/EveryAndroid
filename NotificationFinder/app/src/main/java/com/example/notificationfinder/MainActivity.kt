@@ -1,5 +1,6 @@
 package com.example.notificationfinder
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
         adapter.setSearchResultList(dataList){
             Toast.makeText(this, "빌딩이름: ${it.buildingName} 주소: ${it.fullAddress}", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, MapActivity::class.java))
         }
         adapter.notifyDataSetChanged()
     }
