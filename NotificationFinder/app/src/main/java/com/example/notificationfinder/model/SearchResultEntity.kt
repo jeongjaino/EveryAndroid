@@ -8,5 +8,5 @@ import kotlinx.android.parcel.Parcelize
 data class SearchResultEntity (
     val fullAddress: String,
     val buildingName: String,
-    val locationLatLng: LocationLatLngEntitiy
+    val locationLatLng: LocationLatLngEntity
         ): Parcelable

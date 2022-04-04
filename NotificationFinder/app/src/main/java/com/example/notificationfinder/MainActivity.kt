@@ -6,12 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.notificationfinder.Api_key.SEARCH_RESULT_EXTRA_KEY
 import com.example.notificationfinder.databinding.ActivityMainBinding
-import com.example.notificationfinder.model.LocationLatLngEntitiy
+import com.example.notificationfinder.model.LocationLatLngEntity
 import com.example.notificationfinder.model.SearchResultEntity
 import com.example.notificationfinder.response.search.Poi
 import com.example.notificationfinder.response.search.Pois
-import com.example.notificationfinder.response.search.SearchResponse
 import com.example.notificationfinder.utils.RetrofitUtil
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             SearchResultEntity(
                 buildingName = it.name ?: "빌딩명 없음",
                 fullAddress = makeMainAddress(it),
-                locationLatLng = LocationLatLngEntitiy(
+                locationLatLng = LocationLatLngEntity(
                     it.noorLat,
                     it.noorLon
                 )
@@ -58,7 +58,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
         adapter.setSearchResultList(dataList){
             Toast.makeText(this, "빌딩이름: ${it.buildingName} 주소: ${it.fullAddress}", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, MapActivity::class.java))
+            startActivity(Intent(this, MapActivity::class.java).apply{
+                putExtra(SEARCH_RESULT_EXTRA_KEY, it)
+            })
         }
         adapter.notifyDataSetChanged()
     }

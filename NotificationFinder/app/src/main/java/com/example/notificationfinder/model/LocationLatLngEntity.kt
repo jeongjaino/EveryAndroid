@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 //parcelable -> data class를 넘겨줄 때 속도 향상
 @Parcelize
-data class LocationLatLngEntitiy (
-    private val latitude :Float,
-    private val longitude: Float
+data class LocationLatLngEntity (
+     val latitude :Float,
+     val longitude: Float
         ): Parcelable
