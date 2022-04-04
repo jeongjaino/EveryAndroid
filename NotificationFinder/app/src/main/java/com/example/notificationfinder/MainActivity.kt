@@ -3,7 +3,6 @@ package com.example.notificationfinder
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.notificationfinder.Api_key.SEARCH_RESULT_EXTRA_KEY
